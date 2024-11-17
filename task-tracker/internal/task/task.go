@@ -12,3 +12,11 @@ type Task struct {
 	Status      string    `json:"status"`
 	Id          int       `json:"id"`
 }
+
+// TaskStorage struct
+type TaskStorage struct {
+	Tasks    map[string]Task `json:"tasks"`
+	Metadata struct {
+		NextId int `json:"nextId"`
+	} `json:"metadata"`
+}
