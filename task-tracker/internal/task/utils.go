@@ -11,7 +11,9 @@ import (
 
 // nextId returns the next ID to be used for the task being created.
 func nextId() (Id int) {
-	return len(tempStorage) + 1
+	Id = nextAvailableId
+	nextAvailableId++
+	return
 }
 
 // itoa converts a number to a string.
