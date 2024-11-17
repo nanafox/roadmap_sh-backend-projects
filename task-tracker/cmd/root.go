@@ -18,6 +18,8 @@ func Execute(cmd []string) (taskId int, err error) {
 		return task.AddTask(cmd)
 	case "list":
 		return task.ListAll(cmd)
+	case "update":
+		return task.Update(cmd)
 	}
 
 	return 0, fmt.Errorf("hanlde_cmd: %s is not a valid action", action)
