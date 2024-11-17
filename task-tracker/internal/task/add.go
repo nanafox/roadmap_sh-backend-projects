@@ -2,6 +2,8 @@ package task
 
 import (
 	"errors"
+	"fmt"
+	"os"
 	"strings"
 )
 
@@ -20,5 +22,11 @@ func AddTask(taskCmd []string) (taskId int, err error) {
 	}
 
 	taskId, err = task.save() // persist the task data to the storage
+
+	if err != nil {
+		fmt.Fprint(os.Stderr, "Task could not be saved! Try again.")
+	} else { // task was successfully saved to storage.
+		fmt.Printf("Task added successfully (ID: %d)\n", taskId)
+	}
 	return
 }
