@@ -35,12 +35,16 @@ func init() {
 }
 
 // save persists the tasks to the storage.
-func (task *Task) save() (taskId int, err error) {
+func (task *Task) save(options map[string]bool) (taskId int, err error) {
 	currentTime := time.Now()
 
-	task.Id = nextId()
-	task.CreatedAt = currentTime
-	task.UpdatedAt = currentTime
+	if options != nil && options["update"] {
+		task.UpdatedAt = time.Now()
+	} else {
+		task.Id = nextId()
+		task.CreatedAt = currentTime
+		task.UpdatedAt = currentTime
+	}
 
 	taskId = task.Id
 
@@ -87,5 +91,16 @@ func getByStatus(status string) (tasks []Task, err error) {
 			tasks = append(tasks, task)
 		}
 	}
+	return
+}
+
+func getById(id int) (task Task, err error) {
+	strId := itoa(id)
+	task, found := tempStorage[strId]
+
+	if !found {
+		err = fmt.Errorf("Task with ID %d not found", id)
+	}
+
 	return
 }
