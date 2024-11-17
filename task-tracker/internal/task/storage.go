@@ -11,6 +11,7 @@ import (
 )
 
 var tempStorage map[string]Task
+var nextAvailableId int
 
 const filename string = "tasks.json"
 
@@ -21,16 +22,22 @@ func init() {
 	tempStorage = make(map[string]Task)
 
 	file, err := os.ReadFile(filename)
-
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	if len(file) != 0 {
-		err = json.Unmarshal(file, &tempStorage)
+		var fileContent TaskStorage
+
+		err = json.Unmarshal(file, &fileContent)
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		tempStorage = fileContent.Tasks
+		nextAvailableId = fileContent.Metadata.NextId
+	} else {
+		nextAvailableId = 1
 	}
 }
 
@@ -39,7 +46,7 @@ func (task *Task) save(options map[string]bool) (taskId int, err error) {
 	currentTime := time.Now()
 
 	if options != nil && options["update"] {
-		task.UpdatedAt = time.Now()
+		task.UpdatedAt = currentTime
 	} else {
 		task.Id = nextId()
 		task.CreatedAt = currentTime
@@ -50,14 +57,41 @@ func (task *Task) save(options map[string]bool) (taskId int, err error) {
 
 	tempStorage[itoa(taskId)] = *task
 
-	jsonData, err := json.MarshalIndent(tempStorage, "", "  ")
-
-	err = os.WriteFile(filename, jsonData, 0644)
+	// Persist the task data and metadata
+	err = persistTasks()
 	if err != nil {
 		return 0, err
 	}
 
 	return
+}
+
+// persistTasks serializes the current task data and metadata, and writes it
+// to the storage file.
+func persistTasks() error {
+	// Create the task storage structure
+	taskStorage := TaskStorage{
+		Metadata: struct {
+			NextId int `json:"nextId"`
+		}{NextId: nextAvailableId}, // Using the global nextAvailableId value
+		Tasks: tempStorage,
+	}
+
+	// Serialize the data
+	jsonData, err := json.MarshalIndent(
+		taskStorage, "", "  ",
+	)
+	if err != nil {
+		return fmt.Errorf("persist: error serializing tasks: %w", err)
+	}
+
+	// Write to the file
+	err = os.WriteFile(filename, jsonData, 0644)
+	if err != nil {
+		return fmt.Errorf("persist: error writing to storage file: %w", err)
+	}
+
+	return nil
 }
 
 // getAll returns all the tasks in the storage.
@@ -94,6 +128,7 @@ func getByStatus(status string) (tasks []Task, err error) {
 	return
 }
 
+// getById retrieves the task by its ID.
 func getById(id int) (task Task, err error) {
 	strId := itoa(id)
 	task, found := tempStorage[strId]
