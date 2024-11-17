@@ -1,0 +1,15 @@
+# ignore everything
+*
+
+# ignore the generated tasks.json file
+tasks.json
+
+# keep relevant Go files
+!*.go
+!go.mod
+
+# keep .gitignore
+!.gitignore
+
+# keep README files
+!README.md
