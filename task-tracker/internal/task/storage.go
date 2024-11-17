@@ -44,13 +44,9 @@ func (task *Task) save() (taskId int, err error) {
 
 	tempStorage[itoa(taskId)] = *task
 
-	jsonData, err := json.MarshalIndent(
-		tempStorage,
-		"",
-		"  ",
-	)
+	jsonData, err := json.MarshalIndent(tempStorage, "", "  ")
 
-	err = os.WriteFile("tasks.json", jsonData, 0644)
+	err = os.WriteFile(filename, jsonData, 0644)
 	if err != nil {
 		return 0, err
 	}
