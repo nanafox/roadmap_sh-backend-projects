@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"maps"
 	"os"
+	"slices"
 	"time"
 )
 
@@ -51,6 +53,39 @@ func (task *Task) save() (taskId int, err error) {
 		return 0, err
 	}
 
-	fmt.Println("Saved successfully")
+	return
+}
+
+// getAll returns all the tasks in the storage.
+//
+// When the status is a non-empty string, it is used to filter the tasks returned
+// based on its status. The list of accepted task statuses are as follows:
+//
+// todo => For tasks not yet started.
+// in-progress => For tasks that has been started but not completed.
+// done => For completed tasks.
+func getAll(status string) (tasks []Task, err error) {
+	allTasks := slices.Collect(maps.Values(tempStorage))
+
+	if status == "" {
+		tasks = allTasks
+	} else {
+		tasks, err = getByStatus(status)
+	}
+	return
+}
+
+// getByStatus returns all tasks that has a specific status.
+func getByStatus(status string) (tasks []Task, err error) {
+	allTasks := slices.Collect(maps.Values(tempStorage))
+
+	if !slices.Contains(AllowedStatuses, status) {
+		err = fmt.Errorf("get_by_status: %s is not a valid status", status)
+	}
+	for _, task := range allTasks {
+		if task.Status == status {
+			tasks = append(tasks, task)
+		}
+	}
 	return
 }
