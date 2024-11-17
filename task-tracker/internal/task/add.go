@@ -21,7 +21,7 @@ func AddTask(taskCmd []string) (taskId int, err error) {
 		Status:      "todo", // default action is todo
 	}
 
-	taskId, err = task.save() // persist the task data to the storage
+	taskId, err = task.save(nil) // persist the task data to the storage
 
 	if err != nil {
 		fmt.Fprint(os.Stderr, "Task could not be saved! Try again.")
