@@ -1,12 +1,8 @@
-# ignore everything
-*
-
 # ignore the generated tasks.json file
 tasks.json
 
-# keep relevant Go files
-!*.go
-!go.mod
+# ignore generated binary
+task-cli
 
 # keep .gitignore
 !.gitignore
