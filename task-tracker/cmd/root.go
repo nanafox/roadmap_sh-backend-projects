@@ -49,6 +49,7 @@ func Execute(cmd []string) (taskId int, err error) {
 		"update":           task.Update,
 		"mark-in-progress": task.MarkTask,
 		"mark-done":        task.MarkTask,
+		"delete":           task.DeleteTask,
 	}
 
 	// Find and execute the corresponding handler
