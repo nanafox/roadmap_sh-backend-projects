@@ -1,6 +1,7 @@
 # Task CLI - A roadmap.sh Backend Project
 
-**[Project Link](https://roadmap.sh/projects/task-tracker)**
+The project **[Task Tracker](https://roadmap.sh/projects/task-tracker)** is
+a challenge from [roadmap.sh](https://roadmap.sh)
 
 Task CLI is a simple command-line application for managing tasks. It allows
 users to add, list, update, mark as in-progress, mark as done, and delete
