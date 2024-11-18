@@ -26,12 +26,12 @@ func init() {
 // GetPayloadAction returns the action performed by event which is present in
 // the `Payload` of the of response.
 func GetPayloadAction(payload map[string]any) (action string, err error) {
-	name, found := payload["action"]
-	if !found {
+	name, ok := payload["action"].(string)
+	if !ok {
 		err = errors.New("get_payload_action: failed to retrieve payload action")
 	}
 
-	action = capitalize(name.(string))
+	action = capitalize(name)
 	return
 }
 
@@ -43,12 +43,12 @@ func capitalize(word string) (capitalizedWord string) {
 // getRepoName returns the name of of repo in the map provided. This is usually
 // from the response body.
 func GetRepoName(repoMap map[string]any) (repoName string, err error) {
-	name, found := repoMap["name"]
-	if !found {
+	name, ok := repoMap["name"].(string)
+	if !ok {
 		err = errors.New("get_repo_name: failed to retrieve repo name")
 	}
 
-	repoName = name.(string)
+	repoName = name
 	return
 }
 

@@ -9,8 +9,8 @@ import (
 
 // PushEventHandler handles the PushEvent type for a specific event.
 func PushEventHandler(event *Event) (err error) {
-	numOfPushes, found := event.Payload["distinct_size"]
-	if !found {
+	numOfPushes, ok := event.Payload["distinct_size"].(float64)
+	if !ok {
 		return errors.New("push_even_handler: Failed to retrieve number of pushes")
 	}
 
@@ -20,7 +20,7 @@ func PushEventHandler(event *Event) (err error) {
 	}
 
 	commits := "commits"
-	if numOfPushes.(float64) <= 1 {
+	if numOfPushes <= 1 {
 		commits = "commit"
 	}
 
@@ -40,7 +40,7 @@ func WatchEventHandler(event *Event) (err error) {
 		return err
 	}
 
-	fmt.Printf("- %v watching %v\n", action, repoName)
+	fmt.Printf("- %s watching %s\n", action, repoName)
 	return
 }
 
@@ -53,7 +53,7 @@ func IssuesEventHandler(event *Event) (err error) {
 
 	action, err := utils.GetPayloadAction(event.Payload)
 
-	fmt.Printf("- %v an issue in %v\n", action, repoName)
+	fmt.Printf("- %s an issue in %s\n", action, repoName)
 	return
 }
 
@@ -65,12 +65,16 @@ func CreateEventHandler(event *Event) (err error) {
 		return err
 	}
 
-	refType := event.Payload["ref_type"]
+	refType, ok := event.Payload["ref_type"].(string)
+	if !ok {
+		err = errors.New("create_event_handler: failed to extract ref_type")
+	}
+
 	switch refType {
 	case "repository":
 		fmt.Printf("- Created the %v %v\n", refType, repoName)
 	case "branch", "tag":
-		ref := event.Payload["ref"]
+		ref, _ := event.Payload["ref"].(string)
 		fmt.Printf("- Created the %v %v in %v\n", ref, refType, repoName)
 	default:
 		fmt.Printf("- A %v was created\n", refType)
@@ -102,9 +106,13 @@ func IssueCommentEventHandler(event *Event) (err error) {
 		return err
 	}
 
-	issueUrl := event.Payload["issue"].(map[string]any)["html_url"]
+	issueUrl, ok := event.
+		Payload["issue"].(map[string]any)["html_url"].(string)
+	if !ok {
+		err = errors.New("failed to retrieve the HTML URL.")
+	}
 
-	fmt.Printf("- %v a comment in issue %v\n", action, issueUrl)
+	fmt.Printf("- %s a comment in issue %s\n", action, issueUrl)
 	return
 }
 
@@ -115,11 +123,18 @@ func DeleteEventHandler(event *Event) (err error) {
 		return err
 	}
 
-	refType := event.Payload["ref_type"]
-	ref := event.Payload["ref"]
+	refType, ok := event.Payload["ref_type"].(string)
+	if !ok {
+		err = errors.New("delete_event_handler: failed to extract ref_type")
+	}
 
-	fmt.Printf("- Deleted %v '%v' from %v\n", refType, ref, repo)
-	return nil
+	ref, ok := event.Payload["ref"]
+	if !ok {
+		err = errors.New("delete_event_handler: failed to extract ref")
+	}
+
+	fmt.Printf("- Deleted %s '%s' from %s\n", refType, ref, repo)
+	return
 }
 
 // PullRequestReviewEventHandler handles the PullRequestReviewEvent type.
@@ -129,8 +144,12 @@ func PullRequestReviewEventHandler(event *Event) (err error) {
 		return err
 	}
 
-	prUrl := event.Payload["review"].(map[string]any)["html_url"]
+	prUrl, ok := event.
+		Payload["review"].(map[string]any)["html_url"].(string)
+	if !ok {
+		err = errors.New("failed to retrieve the URL for the pull request")
+	}
 
-	fmt.Printf("- %v a review comment to pull request %v\n", action, prUrl)
-	return nil
+	fmt.Printf("- %s a review comment to pull request %s\n", action, prUrl)
+	return
 }
