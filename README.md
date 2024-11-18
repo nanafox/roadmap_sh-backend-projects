@@ -4,11 +4,13 @@ This repository contains all the projects from [roadmap.sh's backend projects](h
 
 ## Challenges
 
-- **[Task Tracker (Golang)](https://github.com/nanafox/roadmap_sh-backend-projects)**
+- **[Task Tracker (Golang)](https://github.com/nanafox/roadmap_sh-backend-projects/tree/main/task-tracker)**
+
   This is the solution for [roadmap.sh Task Tracker](https://roadmap.sh/projects/task-tracker)
   challenge. The solution is written in Golang.
 
-- **[GitHub User Activity](https://github.com/nanafox/roadmap_sh-backend-projects/github-activity) (Golang)**
+- **[GitHub User Activity (Golang)](https://github.com/nanafox/roadmap_sh-backend-projects/tree/main/github-activity)**
+
   This project uses the GitHub API to fetch user activity and display it in the
   terminal.
 
