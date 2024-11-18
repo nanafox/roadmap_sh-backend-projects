@@ -15,7 +15,6 @@ func ListAll(cmd []string) (int, error) {
 	}
 
 	tasks, err := getAll(status)
-
 	if err != nil {
 		return 1, err
 	}
