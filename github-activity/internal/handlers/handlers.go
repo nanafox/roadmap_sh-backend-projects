@@ -95,7 +95,7 @@ func PullRequestEventHandler(event *Event) (err error) {
 		return err
 	}
 
-	fmt.Printf("- %v a pull request in %v\n", action, repo)
+	fmt.Printf("- %s a pull request in %s\n", action, repo)
 	return nil
 }
 
