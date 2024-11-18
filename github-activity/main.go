@@ -21,7 +21,7 @@ const usage = `Usage: github-activity <username> [number of events: Default is 1
 
   For efficiency, responses are cached for later in the /tmp/github-activity-cache/
   directory. If you need to get fresh updates for the same user, feel free to
-  delete the the cached files for that user or all users if you prefer.
+  delete the cached files for that user or all users if you prefer.
 
   The cache files are saved in this format, <username>_<page_size>. So as an 
   example running 'github-activity nanafox 10' will return the first 10 events 
