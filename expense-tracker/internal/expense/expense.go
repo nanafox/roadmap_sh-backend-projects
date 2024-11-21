@@ -14,7 +14,7 @@ type Expense struct {
 // ExpenseStorage is the struct used to handle the serialization and saving of
 // expenses.
 type ExpenseStorage struct {
-	Expenses map[string]Expense `json:"expenses"`
+	Expenses []Expense `json:"expenses"`
 
 	// Metadata for the storage. This helps to keep next ID to use for the record
 	// since I don't have any other way to keep track of the used and next IDs.

@@ -5,14 +5,14 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"maps"
 	"os"
-	"slices"
 	"strconv"
 	"time"
 )
 
-var tempStorage map[string]Expense
+var tempStorage []Expense
+
+var tempStorageMap map[int]Expense
 
 var nextAvailableId int
 
@@ -31,7 +31,10 @@ func init() {
 		log.Fatal(err)
 	}
 
-	tempStorage = make(map[string]Expense)
+	tempStorage = []Expense{}
+	// ensure we still get constant retrievals
+	tempStorageMap = make(map[int]Expense)
+
 	if len(file) != 0 {
 		var fileContent ExpenseStorage
 
@@ -61,7 +64,10 @@ func (expense *Expense) Save(options map[string]bool) (expenseId int, err error)
 
 	expenseId = expense.Id
 
-	tempStorage[itoa(expenseId)] = *expense
+	tempStorage = append(tempStorage, *expense)
+
+	// this is needed so we don't have an O(n) runtime when searching.
+	tempStorageMap[expense.Id] = *expense
 
 	// Persist the expense data and metadata
 	err = persistExpenses()
@@ -100,22 +106,22 @@ func persistExpenses() error {
 	return nil
 }
 
-// getAll returns all the expenses in the storage.
+// GetAll returns all the expenses in the storage.
 //
 // When the status is a non-empty string, it is used to filter the expenses returned
 // based on its status. The list of accepted expense statuses are as follows:
 //
-// todo => For expenses not yet started.
-// in-progress => For expenses that has been started but not completed.
-// done => For completed expenses.
-func getAll() (expenses []Expense) {
-	return slices.Collect(maps.Values(tempStorage))
+// Parameters:
+//
+//	limit (int): The number of expenses to retrieve
+func GetAll(limit int) (expenses []Expense) {
+	limit = min(limit, NumberOfExpenses()) // ensure the limit is within range
+	return tempStorage[:limit]
 }
 
 // getById retrieves the expense by its ID.
 func getById(id int) (expense Expense, err error) {
-	strId := itoa(id)
-	expense, found := tempStorage[strId]
+	expense, found := tempStorageMap[id]
 
 	if !found {
 		err = fmt.Errorf("Expense with ID %d not found", id)
@@ -125,8 +131,8 @@ func getById(id int) (expense Expense, err error) {
 }
 
 // nextId returns the next ID to be used for the expense being created.
-func nextId() (Id int) {
-	Id = nextAvailableId
+func nextId() (id int) {
+	id = nextAvailableId
 	nextAvailableId++
 	return
 }
@@ -146,4 +152,9 @@ func createFile(filename string) (err error) {
 	}
 
 	return
+}
+
+// NumberOfExpenses returns the number of expenses in the database.
+func NumberOfExpenses() (numOfExpenses int) {
+	return len(tempStorage)
 }
