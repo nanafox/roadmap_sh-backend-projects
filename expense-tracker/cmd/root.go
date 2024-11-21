@@ -28,7 +28,7 @@ func Execute() (err error) {
 	case "update":
 		return notImplementedError("update")
 	case "summary":
-		return notImplementedError("summary")
+		return summaryHandler(os.Args[2:])
 	default:
 		flag.Usage()
 		return notImplementedError(os.Args[1])
