@@ -22,7 +22,7 @@ func Execute() (err error) {
 	case "add":
 		return addHandler(os.Args[2:])
 	case "list":
-		return notImplementedError("list")
+		return listHandler(os.Args[2:])
 	case "delete":
 		return notImplementedError("delete")
 	case "update":
