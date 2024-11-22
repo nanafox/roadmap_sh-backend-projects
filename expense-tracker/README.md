@@ -1,11 +1,31 @@
 # Expense Tracker CLI - A roadmap.sh Backend Project
 
+<!--toc:start-->
+
+## Table of Contents
+
+- [Expense Tracker CLI - A roadmap.sh Backend Project](#table-of-contents)
+  - [Features](#features)
+  - [Installation](#installation)
+  - [Usage](#usage)
+    - [`add`](#add)
+    - [`list`](#list)
+    - [`delete`](#delete)
+    - [`update`](#update)
+    - [`summary`](#summary)
+  - [Data Storage](#data-storage)
+  - [Error Handling](#error-handling)
+  - [Contributing](#contributing)
+  - [License](#license)
+  <!--toc:end-->
+
 **Expense Tracker** is a simple Command-Line Interface (CLI) application
 for managing and tracking your expenses. The tool allows users to easily add,
 view, update, delete, and summarize their expenses from the terminal.
 
-The project **[Expense Tracker](https://roadmap.sh/projects/expense-tracker)** is
-a challenge from [roadmap.sh](https://roadmap.sh)
+The project
+**[Expense Tracker](https://roadmap.sh/projects/expense-tracker)**
+is a challenge from [roadmap.sh](https://roadmap.sh)
 
 ## Features
 
@@ -40,17 +60,20 @@ a challenge from [roadmap.sh](https://roadmap.sh)
    ```
 
 3. Run the application:
+
    ```bash
    ./expense-tracker
    ```
 
 ## Usage
 
-The CLI supports the following commands. Use `--help` with any command for additional details.
+The CLI supports the following commands. Use `--help` with any command for
+additional details.
 
 ### `add`
 
-Adds a new expense to the list of tracked expenses. Requires a description and an amount.
+Adds a new expense to the list of tracked expenses. Requires a description
+and an amount.
 **Usage:**
 
 ```bash
@@ -89,7 +112,8 @@ Deletes an expense by its ID. _Caution: This operation is irreversible._
 
 ### `update`
 
-Updates an existing expense, allowing you to correct mistakes in the description or amount.
+Updates an existing expense, allowing you to correct mistakes in the
+description or amount.
 **Usage:**
 
 ```bash
@@ -131,7 +155,8 @@ persistence between sessions.
 ## Error Handling
 
 1. Invalid commands or missing arguments will result in descriptive error messages.
-2. Operations such as `delete` or `update` on non-existent IDs will notify you that the expense does not exist.
+2. Operations such as `delete` or `update` on non-existent IDs will notify you
+   that the expense does not exist.
 
 ## Contributing
 
