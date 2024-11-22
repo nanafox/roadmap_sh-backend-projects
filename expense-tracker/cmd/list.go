@@ -4,6 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"strings"
 
 	"github.com/nanafox/expense-tracker/internal/expense"
 )
@@ -76,7 +77,7 @@ func printExpenses(expenses []expense.Expense) {
 
 	// Print the header
 	fmt.Printf(
-		"# %-3s %-10s %-*s %10s\n",
+		"# %-3s %-12s %-*s %10s\n",
 		"ID",
 		"Date",
 		maxDescriptionLength,
@@ -84,12 +85,21 @@ func printExpenses(expenses []expense.Expense) {
 		"Amount",
 	)
 
+	fmt.Printf(
+		"# %-3s %-12s %-*s %10s\n",
+		"===",
+		"============",
+		maxDescriptionLength,
+		strings.Repeat("=", maxDescriptionLength),
+		strings.Repeat("=", 10),
+	)
+
 	// Print each expense
 	for _, expense := range expenses {
 		date := expense.CreatedAt
 		formattedDate := fmt.Sprintf("%d-%02d-%02d", date.Year(), date.Month(), date.Day())
 		fmt.Printf(
-			"# %-3d %-10s %-*s %5s%.2f\n",
+			"# %-3d %-12s %-*s %5s%.2f\n",
 			expense.Id,
 			formattedDate,
 			maxDescriptionLength,
