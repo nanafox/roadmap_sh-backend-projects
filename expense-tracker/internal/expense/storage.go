@@ -6,15 +6,12 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"strconv"
 	"time"
 )
 
-var tempStorage []Expense
-
-var tempStorageMap map[int]Expense
-
-var nextAvailableId int
+var expenseStorage ExpenseStorage
 
 var filename string = os.Getenv("HOME") + "/.expenses.json"
 
@@ -31,22 +28,14 @@ func init() {
 		log.Fatal(err)
 	}
 
-	tempStorage = []Expense{}
-	// ensure we still get constant retrievals
-	tempStorageMap = make(map[int]Expense)
-
+	expenseStorage.Expenses = make(map[int]Expense)
 	if len(file) != 0 {
-		var fileContent ExpenseStorage
-
-		err = json.Unmarshal(file, &fileContent)
+		err = json.Unmarshal(file, &expenseStorage)
 		if err != nil {
 			log.Fatal(err)
 		}
-
-		tempStorage = fileContent.Expenses
-		nextAvailableId = fileContent.Metadata.NextId
 	} else {
-		nextAvailableId = 1
+		expenseStorage.Metadata.NextId = 1
 	}
 }
 
@@ -64,10 +53,7 @@ func (expense *Expense) Save(options map[string]bool) (expenseId int, err error)
 
 	expenseId = expense.Id
 
-	tempStorage = append(tempStorage, *expense)
-
-	// this is needed so we don't have an O(n) runtime when searching.
-	tempStorageMap[expense.Id] = *expense
+	expenseStorage.Expenses[expenseId] = *expense
 
 	// Persist the expense data and metadata
 	err = persistExpenses()
@@ -82,17 +68,7 @@ func (expense *Expense) Save(options map[string]bool) (expenseId int, err error)
 // to the storage file.
 func persistExpenses() error {
 	// Create the expense storage structure
-	expenseStorage := ExpenseStorage{
-		Metadata: struct {
-			NextId int `json:"nextId"`
-		}{NextId: nextAvailableId}, // Using the global nextAvailableId value
-		Expenses: tempStorage,
-	}
-
-	// Serialize the data
-	jsonData, err := json.MarshalIndent(
-		expenseStorage, "", "  ",
-	)
+	jsonData, err := json.MarshalIndent(expenseStorage, "", "  ")
 	if err != nil {
 		return fmt.Errorf("persist: error serializing expenses: %w", err)
 	}
@@ -108,20 +84,34 @@ func persistExpenses() error {
 
 // GetAll returns all the expenses in the storage.
 //
-// When the status is a non-empty string, it is used to filter the expenses returned
-// based on its status. The list of accepted expense statuses are as follows:
-//
+// It sorts the expenses by CreatedAt and limits the results to the specified
+// number of expenses (limit).
 // Parameters:
 //
 //	limit (int): The number of expenses to retrieve
 func GetAll(limit int) (expenses []Expense) {
-	limit = min(limit, NumberOfExpenses()) // ensure the limit is within range
-	return tempStorage[:limit]
+	// Convert map to slice
+	expenses = make([]Expense, 0, len(expenseStorage.Expenses))
+	for _, expense := range expenseStorage.Expenses {
+		expenses = append(expenses, expense)
+	}
+
+	// Sort by CreatedAt
+	sort.Slice(expenses, func(i, j int) bool {
+		return expenses[i].CreatedAt.Before(expenses[j].CreatedAt)
+	})
+
+	// Apply limit if needed
+	if limit > 0 && limit < len(expenses) {
+		expenses = expenses[:limit]
+	}
+
+	return expenses
 }
 
-// getById retrieves the expense by its ID.
+// getById retrieves an expense by its ID from the ExpenseStorage.
 func getById(id int) (expense Expense, err error) {
-	expense, found := tempStorageMap[id]
+	expense, found := expenseStorage.Expenses[id]
 
 	if !found {
 		err = fmt.Errorf("Expense with ID %d not found", id)
@@ -130,10 +120,22 @@ func getById(id int) (expense Expense, err error) {
 	return
 }
 
+// DeleteById removes the expense by its ID.
+func DeleteById(id int) (err error) {
+	_, exists := expenseStorage.Expenses[id]
+	if !exists {
+		return fmt.Errorf("Expense with ID %d not found", id)
+	}
+
+	delete(expenseStorage.Expenses, id)
+
+	return persistExpenses()
+}
+
 // nextId returns the next ID to be used for the expense being created.
 func nextId() (id int) {
-	id = nextAvailableId
-	nextAvailableId++
+	id = expenseStorage.Metadata.NextId
+	expenseStorage.Metadata.NextId++
 	return
 }
 
@@ -156,5 +158,5 @@ func createFile(filename string) (err error) {
 
 // NumberOfExpenses returns the number of expenses in the database.
 func NumberOfExpenses() (numOfExpenses int) {
-	return len(tempStorage)
+	return len(expenseStorage.Expenses)
 }
