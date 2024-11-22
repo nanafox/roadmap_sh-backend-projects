@@ -24,7 +24,7 @@ func Execute() (err error) {
 	case "list":
 		return listHandler(os.Args[2:])
 	case "delete":
-		return notImplementedError("delete")
+		return deleteHandler(os.Args[2:])
 	case "update":
 		return notImplementedError("update")
 	case "summary":
