@@ -43,6 +43,11 @@ func listHandler(args []string) (err error) {
 
 	listCmd.Parse(args)
 
+	if expense.NumberOfExpenses() == 0 {
+		fmt.Println("No expenses found.")
+		return
+	}
+
 	if *limit < 1 {
 		return errors.New("list: limit must be greater than or equal to 1")
 	}
