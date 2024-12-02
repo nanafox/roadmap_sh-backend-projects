@@ -1,0 +1,33 @@
+<%= form_with url: operation_path, method: :post, class: "card flex flex-col gap" do |form| %>
+  <%= hidden_field_tag :type, type %>
+  <div class="flex flex-col gap-half">
+    <h3 class="text-2xl font-semibold leading-none"><%= type.capitalize %>
+      Conversion</h3>
+    <p class="text-sm text-subtle">Convert different
+      <%= type + "s" %>
+      to see their results.</p>
+  </div>
+  <div class="flex flex-col gap mb-2">
+    <div class="flex flex-col gap-half">
+      <%= form.label type,
+                 "Enter the #{type} to convert",
+                 class: "text-sm font-medium leading-none" %>
+      <%= form.text_field type, class: "input" %>
+    </div>
+    <div class="flex flex-col gap-half">
+      <%= form.label "unit_from",
+                 "Unit to convert from",
+                 class: "text-sm font-medium leading-none" %>
+      <%= form.select "unit_from", @conversions[type.to_sym], {}, class: "input" %>
+    </div>
+    <div class="flex flex-col gap-half">
+      <%= form.label "unit_to",
+                 "Unit to convert to",
+                 class: "text-sm font-medium leading-none" %>
+      <%= form.select "unit_to", @conversions[type.to_sym], {}, class: "input" %>
+    </div>
+  </div>
+  <div class="flex items-center">
+    <%= form.submit "Convert #{type.capitalize}", class: "btn btn--primary" %>
+  </div>
+<% end %>

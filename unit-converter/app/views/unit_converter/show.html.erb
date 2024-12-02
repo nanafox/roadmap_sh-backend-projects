@@ -1,0 +1,95 @@
+<turbo-frame id="tabs">
+  <div
+    class="flex flex-col gap"
+    style="max-inline-size: 400px"
+    data-controller="tabs"
+  >
+    <!-- Tab buttons -->
+    <div
+      class="tabs__list"
+      data-action="keydown.left->tabs#prev keydown.right->tabs#next"
+      role="tablist"
+    >
+      <button
+        id="trigger_length"
+        class="btn btn--tab"
+        data-tabs-target="button"
+        data-action="tabs#select"
+        role="tab"
+        aria-controls="tab_length"
+      >Length</button>
+      <button
+        id="trigger_weight"
+        class="btn btn--tab"
+        data-tabs-target="button"
+        data-action="tabs#select"
+        role="tab"
+        aria-controls="tab_weight"
+      >Weight</button>
+      <button
+        id="trigger_temperature"
+        class="btn btn--tab"
+        data-tabs-target="button"
+        data-action="tabs#select"
+        role="tab"
+        aria-controls="tab_temperature"
+      >Temperature</button>
+    </div>
+    <!-- Flash Messages -->
+    <% if flash[:notice] %>
+      <div class="alert alert--positive">
+        <%= flash[:notice] %>
+      </div>
+    <% elsif flash[:alert] %>
+      <div class="alert alert--negative">
+        <%= flash[:alert] %>
+      </div>
+    <% end %>
+    <!-- Results -->
+    <% if @results.present? %>
+      <div class="results card">
+        <h3 class="text-lg font-semibold">Results of your calculation</h3>
+        <p class="text-base"><%= @results %></p>
+        <%= button_to "Reset",
+        root_path,
+        type: :reset,
+        class: "btn btn--primary",
+        method: :get %>
+      </div>
+    <% else %>
+      <!-- Tab Panels -->
+      <div
+        hidden
+        id="tab_length"
+        data-tabs-target="tab"
+        role="tabpanel"
+        tabindex="0"
+        aria-labelledby="trigger_length"
+      >
+        <%= render "form", type: "length" %>
+      </div>
+
+      <div
+        hidden
+        id="tab_weight"
+        data-tabs-target="tab"
+        role="tabpanel"
+        tabindex="0"
+        aria-labelledby="trigger_weight"
+      >
+        <%= render "form", type: "weight" %>
+      </div>
+
+      <div
+        hidden
+        id="tab_temperature"
+        data-tabs-target="tab"
+        role="tabpanel"
+        tabindex="0"
+        aria-labelledby="trigger_temperature"
+      >
+        <%= render "form", type: "temperature" %>
+      </div>
+    <% end %>
+  </div>
+</turbo-frame>
