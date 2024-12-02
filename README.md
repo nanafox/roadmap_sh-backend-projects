@@ -14,12 +14,21 @@ This repository contains all the projects from [roadmap.sh's backend projects](h
   This project uses the GitHub API to fetch user activity and display it in the
   terminal.
 
-  Find the [GitHub User Activity](https://roadmap.sh/projects/github-user-activity) project on [roadmap.sh](https://roadmap.sh)
+  Find the [GitHub User Activity](https://roadmap.sh/projects/github-user-activity)
+  project on [roadmap.sh](https://roadmap.sh)
 
 - **[Expense Tracker (Golang)](https://github.com/nanafox/roadmap_sh-backend-projects/tree/main/expense-tracker)**
 
-  This project is a simple expense tracker application to manage your finances from the CLI.
-  The application allows users to add, delete, and view their expenses.
-  Also, it provides a summary of the expenses.
+  This project is a simple expense tracker application to manage your finances
+  from the CLI. The application allows users to add, delete, and view their
+  expenses. Also, it provides a summary of the expenses.
 
-  Find the [Expense Tracker](https://roadmap.sh/projects/expense-tracker) project on [roadmap.sh](https://roadmap.sh)
+  Find the [Expense Tracker](https://roadmap.sh/projects/expense-tracker)
+  project on [roadmap.sh](https://roadmap.sh)
+
+- **[Unit Converter Web App (Ruby on Rails)](https://github.com/nanafox/roadmap_sh-backend-projects/tree/main/unit-converter)**
+
+  This project is a simple web app for converting units of measurements.
+
+  Find the [Unit Converter Web App](https://roadmap.sh/projects/unit-converter)
+  project on [roadmap.sh](https://roadmap.sh)
