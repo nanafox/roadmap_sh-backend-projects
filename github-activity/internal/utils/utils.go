@@ -100,7 +100,7 @@ func RequestHelper(apiClient *client.ApiClient) {
 		if err != nil {
 			log.Fatal(err)
 			// remove the file so that the next request will start afresh
-			os.Remove(cacheFile)
+			go os.Remove(cacheFile)
 
 			// issue the same request again since the file was damages and didn't
 			// return the right information needed
@@ -114,7 +114,7 @@ func RequestHelper(apiClient *client.ApiClient) {
 		apiClient.Get(url, queryParams, headers)
 		// cache the response on success
 		if apiClient.Error == nil {
-			writeToCache(cacheFile, []byte(apiClient.Body))
+			go writeToCache(cacheFile, []byte(apiClient.Body))
 		}
 	}
 }

@@ -50,10 +50,18 @@ func main() {
 		log.Fatal(err)
 	}
 
+	results := make(chan error, len(events))
+
 	for _, event := range events {
-		err := cmd.ParseEvent(&event)
-		if err != nil {
-			fmt.Println(err)
+		go func(event handlers.Event) {
+			results <- cmd.ParseEvent(&event)
+		}(event)
+	}
+
+	for range events {
+		if err := <-results; err != nil {
+			fmt.Fprintln(os.Stderr, err)
 		}
 	}
+	close(results)
 }
