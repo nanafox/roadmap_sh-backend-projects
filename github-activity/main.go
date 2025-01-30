@@ -45,6 +45,11 @@ func main() {
 
 	var events []handlers.Event
 
+	if apiClient.StatusCode == 404 {
+		fmt.Println("github-activity: This user does not exist!")
+		return
+	}
+
 	err := apiClient.ResponseToStruct(&events)
 	if err != nil {
 		log.Fatal(err)

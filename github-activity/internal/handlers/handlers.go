@@ -67,7 +67,7 @@ func CreateEventHandler(event *Event) (err error) {
 
 	refType, ok := event.Payload["ref_type"].(string)
 	if !ok {
-		err = errors.New("create_event_handler: failed to extract ref_type")
+		return errors.New("create_event_handler: failed to extract ref_type")
 	}
 
 	switch refType {
@@ -109,7 +109,7 @@ func IssueCommentEventHandler(event *Event) (err error) {
 	issueUrl, ok := event.
 		Payload["issue"].(map[string]any)["html_url"].(string)
 	if !ok {
-		err = errors.New("failed to retrieve the HTML URL.")
+		return errors.New("failed to retrieve the HTML URL")
 	}
 
 	fmt.Printf("- %s a comment in issue %s\n", action, issueUrl)
