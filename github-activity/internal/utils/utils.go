@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/nanafox/simple-http-client/pkg/client"
+	"github.com/nanafox/gofetch"
 )
 
 const cacheDir string = "/tmp/github-activity-cache/"
@@ -57,8 +57,8 @@ func GetRepoName(repoMap map[string]any) (repoName string, err error) {
 //
 // Parameters:
 //
-//	apiClient (client.ApiClient) The API client to use for the request. This
-//	uses my personal API client.
+//	client (gofetch.Client) The API client to use for the request. This
+//	uses my personal API gofetch.
 //
 // Behavior:
 //
@@ -67,15 +67,15 @@ func GetRepoName(repoMap map[string]any) (repoName string, err error) {
 //	information as the last, the cached response is returned and no API call
 //	is made to the GitHub to save bandwidth and make the operation faster.
 //
-//	It does not return anything, the `apiClient` is updated with the results.
+//	It does not return anything, the `client` is updated with the results.
 //	This is because a reference to the API client is used and the `Body` and
-//	`Error` fields of the `apiClient` allow updates.
+//	`Error` fields of the `client` allow updates.
 //
 // Cache File Location:
 //
 //	The cached files have the format <username>_<page_size> and stored in the
 //	/tmp directory.
-func RequestHelper(apiClient *client.ApiClient) {
+func RequestHelper(client *gofetch.Client) {
 	username := os.Args[1]
 
 	page_size := "10" // Default to 10 events at a time.
@@ -86,10 +86,10 @@ func RequestHelper(apiClient *client.ApiClient) {
 	cacheFile := cacheDir + username + "_" + page_size + ".json"
 
 	url := "https://api.github.com/users/" + username + "/events/public"
-	queryParams := []client.ApiQuery{
+	queryParams := []gofetch.Query{
 		{Key: "per_page", Value: page_size},
 	}
-	headers := client.ApiHeader{
+	headers := gofetch.Header{
 		Key: "Accept", Value: "application/vnd.github+json",
 	}
 
@@ -104,17 +104,17 @@ func RequestHelper(apiClient *client.ApiClient) {
 
 			// issue the same request again since the file was damages and didn't
 			// return the right information needed
-			RequestHelper(apiClient)
+			RequestHelper(client)
 		}
 
 		// set the fields of the api client to use the results from the cache
-		apiClient.Body = string(cacheContent)
-		apiClient.Error = err
+		client.Body = string(cacheContent)
+		client.Error = err
 	} else { // make the API request to retrieve the user's events.
-		apiClient.Get(url, queryParams, headers)
+		client.Get(url, queryParams, headers)
 		// cache the response on success
-		if apiClient.Error == nil {
-			go writeToCache(cacheFile, []byte(apiClient.Body))
+		if client.Error == nil {
+			go writeToCache(cacheFile, []byte(client.Body))
 		}
 	}
 }

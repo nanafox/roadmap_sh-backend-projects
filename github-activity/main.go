@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/nanafox/simple-http-client/pkg/client"
+	"github.com/nanafox/gofetch"
 
 	"github.com/nanafox/github-activity/cmd"
 	"github.com/nanafox/github-activity/internal/handlers"
@@ -35,22 +35,22 @@ func main() {
 		os.Exit(1)
 	}
 
-	apiClient := client.ApiClient{Timeout: 5 * time.Second}
+	client := gofetch.New(gofetch.Config{Timeout: 5 * time.Second})
 
 	// handles the requests and caching
-	utils.RequestHelper(&apiClient)
-	if apiClient.Error != nil {
-		log.Fatal(apiClient.Error)
+	utils.RequestHelper(client)
+	if client.Error != nil {
+		log.Fatal(client.Error)
 	}
 
 	var events []handlers.Event
 
-	if apiClient.StatusCode == 404 {
+	if client.StatusCode == 404 {
 		fmt.Println("github-activity: This user does not exist!")
 		return
 	}
 
-	err := apiClient.ResponseToStruct(&events)
+	err := client.ResponseToStruct(&events)
 	if err != nil {
 		log.Fatal(err)
 	}
