@@ -32,3 +32,12 @@ This repository contains all the projects from [roadmap.sh's backend projects](h
 
   Find the [Unit Converter Web App](https://roadmap.sh/projects/unit-converter)
   project on [roadmap.sh](https://roadmap.sh)
+
+- **[Todo List API (Ruby on Rails)](https://github.com/nanafox/roadmap_sh-backend-projects/tree/main/todo-list-api-ruby)**
+
+  This project is a RESTful API for managing todo tasks built with Ruby on Rails.
+  It includes user authentication using Rodauth and allows users to create, read,
+  update, and delete tasks with different priorities and statuses.
+
+  Find the [Todo List API](https://roadmap.sh/projects/todo-list-api)
+  project on [roadmap.sh](https://roadmap.sh)
