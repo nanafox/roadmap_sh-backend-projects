@@ -1,0 +1,381 @@
+openapi: 3.0.1
+info:
+  title: Rodauth
+  description: This lists all the endpoints provided by Rodauth features.
+  version: 2.39.0
+externalDocs:
+  description: Rodauth documentation
+  url: https://rodauth.jeremyevans.net/documentation.html
+tags:
+- name: Login
+  externalDocs:
+    description: Feature documentation
+    url: http://rodauth.jeremyevans.net/rdoc/files/doc/login_rdoc.html
+- name: Create Account
+  externalDocs:
+    description: Feature documentation
+    url: http://rodauth.jeremyevans.net/rdoc/files/doc/create_account_rdoc.html
+- name: Verify Account
+  externalDocs:
+    description: Feature documentation
+    url: http://rodauth.jeremyevans.net/rdoc/files/doc/verify_account_rdoc.html
+- name: Logout
+  externalDocs:
+    description: Feature documentation
+    url: http://rodauth.jeremyevans.net/rdoc/files/doc/logout_rdoc.html
+- name: Reset Password
+  externalDocs:
+    description: Feature documentation
+    url: http://rodauth.jeremyevans.net/rdoc/files/doc/reset_password_rdoc.html
+- name: Change Password
+  externalDocs:
+    description: Feature documentation
+    url: http://rodauth.jeremyevans.net/rdoc/files/doc/change_password_rdoc.html
+- name: Change Login
+  externalDocs:
+    description: Feature documentation
+    url: http://rodauth.jeremyevans.net/rdoc/files/doc/change_login_rdoc.html
+- name: Verify Login Change
+  externalDocs:
+    description: Feature documentation
+    url: http://rodauth.jeremyevans.net/rdoc/files/doc/verify_login_change_rdoc.html
+- name: Close Account
+  externalDocs:
+    description: Feature documentation
+    url: http://rodauth.jeremyevans.net/rdoc/files/doc/close_account_rdoc.html
+paths:
+  "/auth/login":
+    post:
+      tags:
+      - Login
+      summary: Perform login
+      description: |
+        ```ruby
+        rodauth.login_route #=> "login"
+        rodauth.login_path #=> "/auth/login"
+        rodauth.login_url #=> "https://example.com/auth/login"
+
+        rodauth.current_route #=> :login (in the request)
+        ```
+      responses:
+        '200':
+          description: successful login
+        '401':
+          description: no matching login, invalid password
+        '403':
+          description: unverified account
+      parameters:
+      - name: email
+        in: query
+        description: Email address for the account
+        required: true
+        style: form
+        example: user@example.com
+        schema:
+          type: string
+      - name: password
+        in: query
+        description: Password for the account
+        required: true
+        style: form
+        example: secret123
+        schema:
+          type: string
+  "/auth/register":
+    post:
+      tags:
+      - Create Account
+      summary: Perform registration
+      description: |
+        ```ruby
+        rodauth.create_account_route #=> "register"
+        rodauth.create_account_path #=> "/auth/register"
+        rodauth.create_account_url #=> "https://example.com/auth/register"
+
+        rodauth.current_route #=> :create_account (in the request)
+        ```
+      responses:
+        '200':
+          description: successful registration
+        '422':
+          description: invalid login, invalid password
+      parameters:
+      - name: email
+        in: query
+        description: Email address for the account
+        required: true
+        style: form
+        example: user@example.com
+        schema:
+          type: string
+      - name: password
+        in: query
+        description: Password to set
+        required: true
+        style: form
+        example: secret123
+        schema:
+          type: string
+  "/auth/verify-account":
+    post:
+      tags:
+      - Verify Account
+      summary: Perform account verification
+      description: |
+        ```ruby
+        rodauth.verify_account_route #=> "verify-account"
+        rodauth.verify_account_path #=> "/auth/verify-account"
+        rodauth.verify_account_url #=> "https://example.com/auth/verify-account"
+
+        rodauth.current_route #=> :verify_account (in the request)
+        ```
+      responses:
+        '200':
+          description: successful account verification
+        '401':
+          description: missing or invalid token
+        '422':
+          description: invalid WebAuthn credential data
+      parameters:
+      - name: key
+        in: query
+        description: Account verification token
+        required: true
+        style: form
+        example: "{account_id}_{key_hmac}"
+        schema:
+          type: string
+  "/auth/verify-account-resend":
+    post:
+      tags:
+      - Verify Account
+      summary: Perform resending account verification email
+      description: |
+        ```ruby
+        rodauth.verify_account_resend_route #=> "verify-account-resend"
+        rodauth.verify_account_resend_path #=> "/auth/verify-account-resend"
+        rodauth.verify_account_resend_url #=> "https://example.com/auth/verify-account-resend"
+
+        rodauth.current_route #=> :verify_account_resend (in the request)
+        ```
+      responses:
+        '200':
+          description: successful resend
+        '400':
+          description: email recently sent
+        '401':
+          description: no matching login
+      parameters:
+      - name: email
+        in: query
+        description: Email address for the account
+        required: true
+        style: form
+        example: user@example.com
+        schema:
+          type: string
+  "/auth/logout":
+    post:
+      tags:
+      - Logout
+      summary: Perform logout
+      description: |
+        ```ruby
+        rodauth.logout_route #=> "logout"
+        rodauth.logout_path #=> "/auth/logout"
+        rodauth.logout_url #=> "https://example.com/auth/logout"
+
+        rodauth.current_route #=> :logout (in the request)
+        ```
+      responses:
+        '200':
+          description: successful logout
+      parameters: []
+  "/auth/reset-password-request":
+    post:
+      tags:
+      - Reset Password
+      summary: Perform password reset request
+      description: |
+        ```ruby
+        rodauth.reset_password_request_route #=> "reset-password-request"
+        rodauth.reset_password_request_path #=> "/auth/reset-password-request"
+        rodauth.reset_password_request_url #=> "https://example.com/auth/reset-password-request"
+
+        rodauth.current_route #=> :reset_password_request (in the request)
+        ```
+      responses:
+        '200':
+          description: successfully sent reset password email
+        '401':
+          description: no matching login
+        '403':
+          description: unverified account
+        '400':
+          description: email recently sent
+      parameters:
+      - name: email
+        in: query
+        description: Email address for the account
+        required: true
+        style: form
+        example: user@example.com
+        schema:
+          type: string
+  "/auth/reset-password":
+    post:
+      tags:
+      - Reset Password
+      summary: Perform password reset
+      description: |
+        ```ruby
+        rodauth.reset_password_route #=> "reset-password"
+        rodauth.reset_password_path #=> "/auth/reset-password"
+        rodauth.reset_password_url #=> "https://example.com/auth/reset-password"
+
+        rodauth.current_route #=> :reset_password (in the request)
+        ```
+      responses:
+        '200':
+          description: successfully reset password
+        '401':
+          description: invalid or expired password reset key
+        '422':
+          description: invalid password, same as existing password
+      parameters:
+      - name: key
+        in: query
+        description: Password reset token
+        required: true
+        style: form
+        example: "{account_id}_{key_hmac}"
+        schema:
+          type: string
+  "/auth/change-password":
+    post:
+      tags:
+      - Change Password
+      summary: Perform password change
+      description: |
+        ```ruby
+        rodauth.change_password_route #=> "change-password"
+        rodauth.change_password_path #=> "/auth/change-password"
+        rodauth.change_password_url #=> "https://example.com/auth/change-password"
+
+        rodauth.current_route #=> :change_password (in the request)
+        ```
+      responses:
+        '200':
+          description: successful password change
+        '401':
+          description: invalid previous password, login required
+        '422':
+          description: same as existing password, invalid password
+      parameters:
+      - name: password
+        in: query
+        description: Current account password
+        required: true
+        style: form
+        example: oldsecret123
+        schema:
+          type: string
+      - name: new-password
+        in: query
+        description: Password to set
+        required: true
+        style: form
+        example: newsecret123
+        schema:
+          type: string
+  "/auth/change-login":
+    post:
+      tags:
+      - Change Login
+      summary: Perform login change
+      description: |
+        ```ruby
+        rodauth.change_login_route #=> "change-login"
+        rodauth.change_login_path #=> "/auth/change-login"
+        rodauth.change_login_url #=> "https://example.com/auth/change-login"
+
+        rodauth.current_route #=> :change_login (in the request)
+        ```
+      responses:
+        '401':
+          description: invalid password, login required
+        '422':
+          description: login does not meet requirements, same as current login, already
+            an account with this login
+      parameters:
+      - name: password
+        in: query
+        description: Current account password
+        required: true
+        style: form
+        example: secret123
+        schema:
+          type: string
+      - name: email
+        in: query
+        description: Email to set
+        required: true
+        style: form
+        example: user@example.com
+        schema:
+          type: string
+  "/auth/verify-login-change":
+    post:
+      tags:
+      - Verify Login Change
+      summary: Perform login change verification
+      description: |
+        ```ruby
+        rodauth.verify_login_change_route #=> "verify-login-change"
+        rodauth.verify_login_change_path #=> "/auth/verify-login-change"
+        rodauth.verify_login_change_url #=> "https://example.com/auth/verify-login-change"
+
+        rodauth.current_route #=> :verify_login_change (in the request)
+        ```
+      responses:
+        '200':
+          description: successfully verified login change
+        '401':
+          description: invalid verify login change key, already an account with this
+            login
+      parameters:
+      - name: key
+        in: query
+        description: Login change verification token
+        required: true
+        style: form
+        example: "{account_id}_{key_hmac}"
+        schema:
+          type: string
+  "/auth/close-account":
+    post:
+      tags:
+      - Close Account
+      summary: Perform closing account
+      description: |
+        ```ruby
+        rodauth.close_account_route #=> "close-account"
+        rodauth.close_account_path #=> "/auth/close-account"
+        rodauth.close_account_url #=> "https://example.com/auth/close-account"
+
+        rodauth.current_route #=> :close_account (in the request)
+        ```
+      responses:
+        '200':
+          description: account successfully closed
+        '401':
+          description: invalid password, login required
+      parameters:
+      - name: password
+        in: query
+        description: Current account password
+        required: true
+        style: form
+        example: secret123
+        schema:
+          type: string
